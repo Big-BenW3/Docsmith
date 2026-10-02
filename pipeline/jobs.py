@@ -42,6 +42,28 @@ from typing import Optional
 
 
 # ---------------------------------------------------------------------------
+# Progress estimation
+# ---------------------------------------------------------------------------
+# Ordered (substring, percent) pairs matching log messages written by
+# ``_run_pipeline`` below.  ``Job.progress_percent`` takes the highest match,
+# so the pairs behave like stage watermarks (later stages score higher).
+_STAGE_MARKERS: list[tuple[str, int]] = [
+    ("fetching repo tree", 8),
+    ("fetched ", 22),
+    ("running sdk detection", 30),
+    ("detection:", 44),
+    ("analyzing python source", 54),
+    ("ir: ", 64),
+    ("gathering readme", 70),
+    ("generating documentation sections", 76),
+    ("generated ", 86),
+    ("building mkdocs site", 90),
+    ("packaging source only", 94),
+    ("artifact ready", 96),
+]
+
+
+# ---------------------------------------------------------------------------
 # Job dataclass
 # ---------------------------------------------------------------------------
 
@@ -60,14 +82,36 @@ class Job:
     created_at: float = field(default_factory=time.time)
     finished_at: Optional[float] = None
 
+    def progress_percent(self) -> int:
+        """Estimate completion (0-100) from status + log-line stage markers.
+
+        ``done`` is always 100 and ``queued`` is 0.  For a running job we
+        scan the log for the highest stage watermark reached; an errored job
+        keeps whatever progress it had made before failing.
+        """
+        if self.status == "done":
+            return 100
+        if self.status == "queued":
+            return 0
+        pct = 5  # running, but nothing logged yet
+        for line in self.progress:
+            low = line.lower()
+            for marker, value in _STAGE_MARKERS:
+                if marker in low:
+                    pct = max(pct, value)
+        return min(pct, 99) if self.status == "running" else pct
+
     def public_view(self) -> dict:
         """Return a JSON-safe dict for API responses (hides internal fields)."""
         return {
             "id": self.id,
             "status": self.status,
             "progress": self.progress[-20:],   # last 20 log lines
+            "progress_percent": self.progress_percent(),
             "detection": self.detection,
             "error": self.error,
+            "repo_url": self.repo_url,
+            "branch": self.branch,
             "download_url": (f"/api/download/{self.id}" if self.status == "done" else None),
             "created_at": self.created_at,
             "finished_at": self.finished_at,
