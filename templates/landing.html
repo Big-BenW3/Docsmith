@@ -3,153 +3,642 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Docsmith turns any GitHub SDK repo into a polished MkDocs documentation site — fetched, analyzed and generated automatically.">
+<meta name="theme-color" content="#04060a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2304060a'/%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='none' stroke='%236fcbdc' stroke-opacity='.65' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='monospace' font-weight='700' font-style='italic' font-size='38' fill='%23e08a55'%3ED%3C/text%3E%3C/svg%3E">
 <title>Docsmith — Automated SDK Documentation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#000;--panel:#0A0A0A;--border:rgba(111,203,220,0.25);--cyan:#6FCBDC;--copper:#E0793C;--bone:#F5F3EC;--slate:#8FA3C4;}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);}
-  .nav-left{display:flex;align-items:center;gap:16px;}
-  .menu-btn{width:24px;height:24px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
-  .menu-btn span{display:block;height:1px;background:var(--bone);}
-  .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);}
-  .breadcrumb span{color:var(--bone);}
-  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.04em;}
-  .hero{padding:80px 0 60px;text-align:center;}
-  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(32px,4.5vw,52px);line-height:1.1;max-width:18ch;margin:0 auto 40px;}
-  .diagram{display:flex;align-items:center;justify-content:center;gap:40px;margin-bottom:60px;}
-  .diagram-box{text-align:center;}
-  .diagram-icon{width:64px;height:64px;border:1px solid var(--cyan);border-radius:8px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--cyan);font-size:24px;}
-  .diagram-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);letter-spacing:0.1em;}
-  .diagram-arrow{color:var(--cyan);font-size:20px;}
-  .pipeline{padding:60px 0;border-top:1px solid var(--border);}
-  .section-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;text-align:center;margin-bottom:40px;}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;text-align:center;}
-  .step-icon{width:48px;height:48px;margin:0 auto 16px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--cyan);font-size:20px;}
-  .step-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px;}
-  .step-desc{font-size:13px;color:var(--slate);line-height:1.5;}
-  .specs{padding:60px 0;border-top:1px solid var(--border);}
-  .specs-title{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);letter-spacing:0.15em;text-align:center;margin-bottom:30px;}
-  .spec-table{width:100%;border-collapse:collapse;}
-  .spec-table th{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:0.1em;text-align:left;padding:12px 0;border-bottom:1px solid var(--border);}
-  .spec-table td{font-size:13px;color:var(--bone);padding:14px 0;border-bottom:1px solid var(--border);}
-  .spec-table td:first-child{color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:12px;}
-  .spec-table td:nth-child(2){color:var(--slate);}
-  .cta-section{padding:60px 0;border-top:1px solid var(--border);text-align:center;}
-  .cta-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:24px;}
-  .input-row{display:flex;max-width:560px;margin:0 auto;border:1px solid var(--border);}
-  .input-row input{flex:1;background:transparent;border:none;color:var(--bone);font-family:'IBM Plex Mono',monospace;font-size:13px;padding:14px 16px;outline:none;}
-  .input-row input::placeholder{color:var(--slate);opacity:0.7;}
-  .input-row button{background:var(--copper);border:none;color:var(--bg);font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.06em;padding:0 24px;cursor:pointer;}
-  footer{padding:30px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-  .footer-note,.version{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);}
-</style>
+<link rel="stylesheet" href="/static/app.css">
+<noscript>
+  <style>
+    .preloader { display: none !important; }
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .hero-title .w, .hero-lede, .hero-form-wrap, .hero-metrics { opacity: 1 !important; transform: none !important; }
+  </style>
+</noscript>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="nav-left">
-        <div class="menu-btn"><span></span><span></span><span></span></div>
-        <div class="breadcrumb"><span>Dashboard</span></div>
-      </div>
-      <div class="logo">DOCSMITH</div>
-      <div class="settings-btn">⚙</div>
-    </header>
-    <section class="hero">
-      <h1>Every SDK deserves a docs site as clean as its API.</h1>
-      <div class="diagram">
-        <div class="diagram-box">
-          <div class="diagram-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <polyline points="16 18 22 12 16 6"></polyline>
-              <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
-          </div>
-          <div class="diagram-label">CODE</div>
-        </div>
-        <div class="diagram-arrow">
-          <svg width="40" height="20" viewBox="0 0 40 20" fill="none" stroke="currentColor" stroke-width="1.5">
-            <line x1="0" y1="10" x2="32" y2="10"></line>
-            <polyline points="26 4 34 10 26 16"></polyline>
-          </svg>
-        </div>
-        <div class="diagram-box">
-          <div class="diagram-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-          </div>
-          <div class="diagram-label">DOCS</div>
-        </div>
-      </div>
-    </section>
-    <section class="pipeline">
-      <h2 class="section-title">How it's forged</h2>
-      <div class="steps">
-        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="step-title">Fetch</div><div class="step-desc">GitHub API integration from GitHub APIs.</div></div>
-        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div><div class="step-title">Parse</div><div class="step-desc">Code analysis & comments from documises.</div></div>
-        <div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3m0 0l3-3m-3 3h9.5M5 12h14"/></svg></div><div class="step-title">Ship</div><div class="step-desc">Static Site generation & deployment</div></div>
-      </div>
-    </section>
-    <section class="specs">
-      <div class="specs-title">SPEC SHEET</div>
-      <table class="spec-table">
-        <tr><th>Category</th><th>Features</th><th>Specification</th></tr>
-        <tr><td>Ingestion</td><td>GitHub API integration</td><td>GitHub API</td></tr>
-        <tr><td>Detection</td><td>Code analysis & comments</td><td>Static Site generation</td></tr>
-        <tr><td>Analysis</td><td>Code analysis & comments</td><td>Easter specification</td></tr>
-        <tr><td>Output</td><td>Static Site generation</td><td>Laster specification</td></tr>
-        <tr><td>Deployment</td><td>Static Site generation</td><td>GitHub deployment</td></tr>
-      </table>
-    </section>
-    <section class="cta-section">
-      <h3 class="cta-title">Generate Documentation</h3>
-      <form id="repo-form" class="input-row">
-        <input type="text" id="repo-url" placeholder="https://github.com/username/repo" required />
-        <button type="submit">GENERATE</button>
-      </form>
-    </section>
-    <footer>
-      <div class="footer-note">Technical Credits</div>
-      <div class="version">Version 1.10</div>
-    </footer>
+
+<!-- Entry sequence -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-logo">DOCSMITH</div>
+  <div class="preloader-bar"><div class="preloader-fill"></div></div>
+  <div class="preloader-tag">forging documentation</div>
+</div>
+
+<!-- Custom cursor (fine pointers only) -->
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+<!-- Film grain -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- Header -->
+<header class="site-header" id="site-header">
+  <div class="container nav">
+    <a class="nav-brand" href="/" aria-label="Docsmith home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </span>
+      DOCSMITH
+    </a>
+
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <a class="nav-link" href="#pipeline">Pipeline</a>
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#showcase">Showcase</a>
+      <a class="nav-link" href="#specs">Specs</a>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/Big-BenW3/Docsmith" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="#generate">Generate</a>
+    </nav>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+</header>
+
+<main>
+
+<!-- ============================== HERO ============================== -->
+<section class="hero" id="generate">
+  <div class="aurora a1" aria-hidden="true"></div>
+  <div class="aurora a2" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <div class="container">
+    <h1 class="hero-title">
+      <span class="line"><span class="w" style="--i:0">Every</span> <span class="w" style="--i:1">SDK</span> <span class="w" style="--i:2">deserves</span> <span class="w" style="--i:3">a</span> <span class="w grad" style="--i:4">docs</span></span>
+      <span class="line"><span class="w grad" style="--i:5">site</span> <span class="w" style="--i:6">as</span> <span class="w" style="--i:7">clean</span> <span class="w" style="--i:8">as</span> <span class="w" style="--i:9">its</span> <span class="w" style="--i:10">API.</span></span>
+    </h1>
+
+    <p class="hero-lede">
+      Point Docsmith at a GitHub repository. It fetches the source, detects the SDK surface,
+      analyzes the AST and forges a complete MkDocs documentation site — no manual writing, no stale wiki.
+    </p>
+
+    <div class="hero-form-wrap">
+      <form class="repo-form" novalidate>
+        <div class="field">
+          <input type="text" name="repo_url" placeholder="https://github.com/username/repo" autocomplete="off" spellcheck="false" aria-label="GitHub repository URL">
+        </div>
+        <button type="submit" class="btn btn-primary">Generate docs</button>
+      </form>
+      <div class="form-msg" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="metric">
+        <span class="metric-num">6</span>
+        <span class="metric-label">Pipeline stages</span>
+      </div>
+      <div class="metric">
+        <span class="metric-num">AST</span>
+        <span class="metric-label">Static analysis</span>
+      </div>
+      <div class="metric">
+        <span class="metric-num">MkDocs</span>
+        <span class="metric-label">Site builder</span>
+      </div>
+      <div class="metric">
+        <span class="metric-num">MIT</span>
+        <span class="metric-label">Open source</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ PIPELINE ============================ -->
+<section class="section" id="pipeline">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">The pipeline</span>
+      <h2 class="section-title">From repository to <span class="accent">reference</span></h2>
+      <p class="section-desc">Six deterministic stages run the moment you submit a URL. Every step is logged, scored and visible on the live job dashboard.</p>
+    </div>
+
+    <div class="flow-shell" data-reveal style="--d:120ms">
+      <div class="flow-line" aria-hidden="true"></div>
+      <div class="flow">
+        <div class="flow-node">
+          <span class="node-idx">01</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="node-title">Fetch</span>
+          <span class="node-desc">GitHub tree + file contents</span>
+        </div>
+        <div class="flow-node">
+          <span class="node-idx">02</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></span>
+          <span class="node-title">Detect</span>
+          <span class="node-desc">Heuristics + LLM scoring</span>
+        </div>
+        <div class="flow-node">
+          <span class="node-idx">03</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="12" y1="4" x2="10" y2="20"/></svg></span>
+          <span class="node-title">Analyze</span>
+          <span class="node-desc">Python AST → IR model</span>
+        </div>
+        <div class="flow-node">
+          <span class="node-idx">04</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
+          <span class="node-title">Generate</span>
+          <span class="node-desc">LLM-written markdown</span>
+        </div>
+        <div class="flow-node">
+          <span class="node-idx">05</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+          <span class="node-title">Build</span>
+          <span class="node-desc">MkDocs static site</span>
+        </div>
+        <div class="flow-node">
+          <span class="node-idx">06</span>
+          <span class="node-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><line x1="10" y1="13" x2="14" y2="13"/></svg></span>
+          <span class="node-title">Ship</span>
+          <span class="node-desc">docs.zip artifact</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ FEATURES ============================ -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow">Capabilities</span>
+      <h2 class="section-title">Everything a docs team does — <span class="accent">automated</span></h2>
+      <p class="section-desc">Each stage is independently observable, deterministic where it matters, and LLM-assisted only where creativity pays off.</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature-card" data-reveal style="--d:0ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <span class="fc-idx">01 / FETCH</span>
+        </div>
+        <h3>GitHub-native ingestion</h3>
+        <p>Pulls the full file tree and contents through the GitHub REST API, with PAT-boosted rate limits and honest truncation flags for very large repos.</p>
+      </article>
+
+      <article class="feature-card" data-reveal style="--d:80ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></span>
+          <span class="fc-idx">02 / DETECT</span>
+        </div>
+        <h3>Scored SDK detection</h3>
+        <p>Deterministic heuristics score the repository first. Only inconclusive scores are escalated to the LLM classifier — fast, cheap, and auditable.</p>
+      </article>
+
+      <article class="feature-card" data-reveal style="--d:160ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="12" y1="4" x2="10" y2="20"/></svg></span>
+          <span class="fc-idx">03 / ANALYZE</span>
+        </div>
+        <h3>AST-accurate analysis</h3>
+        <p>Python sources are parsed into an intermediate representation — modules, classes, functions, signatures and docstrings — never guessed from regex.</p>
+      </article>
+
+      <article class="feature-card" data-reveal style="--d:0ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></span>
+          <span class="fc-idx">04 / GENERATE</span>
+        </div>
+        <h3>Grounded generation</h3>
+        <p>The LLM writes real prose — installation guides, quickstarts, API reference pages — grounded in your README, examples and changelog for accuracy.</p>
+      </article>
+
+      <article class="feature-card" data-reveal style="--d:80ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+          <span class="fc-idx">05 / BUILD</span>
+        </div>
+        <h3>MkDocs site build</h3>
+        <p>Generated markdown is assembled into a themed MkDocs site. If the build fails, the pipeline degrades gracefully and still ships raw sources.</p>
+      </article>
+
+      <article class="feature-card" data-reveal style="--d:160ms">
+        <div class="fc-head">
+          <span class="fc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
+          <span class="fc-idx">06 / SHIP</span>
+        </div>
+        <h3>Portable artifacts</h3>
+        <p>Results arrive as a <code>docs.zip</code> you can host anywhere, plus a live preview on the dashboard while the job completes.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SHOWCASE ============================ -->
+<section class="section" id="showcase">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">Before / after</span>
+      <h2 class="section-title">Raw repository in. <span class="accent">Reference site out.</span></h2>
+      <p class="section-desc">Docsmith reads the structure your code already describes and turns it into navigable, themed documentation.</p>
+    </div>
+
+    <div class="compare" data-reveal style="--d:120ms">
+      <!-- Input -->
+      <div class="compare-pane pane-input">
+        <div class="pane-head">
+          <span>Input · repository</span>
+          <span class="pane-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+        <div class="pane-body">
+          <div class="file-tree" aria-hidden="true">
+            <div class="row"><span class="ico">▾</span><span>my-sdk/</span></div>
+            <div class="row indent-1"><span class="ico">▾</span><span>src/</span></div>
+            <div class="row indent-2"><span class="ico">›</span><span class="py">__init__.py</span></div>
+            <div class="row indent-2"><span class="ico">›</span><span class="py">client.py</span></div>
+            <div class="row indent-2"><span class="ico">›</span><span class="py">models.py</span></div>
+            <div class="row indent-2"><span class="ico">›</span><span class="py">exceptions.py</span></div>
+            <div class="row indent-1"><span class="ico">▾</span><span>examples/</span></div>
+            <div class="row indent-2"><span class="ico">›</span><span class="py">quickstart.py</span></div>
+            <div class="row indent-1"><span class="ico">›</span><span class="md">README.md</span></div>
+            <div class="row indent-1"><span class="ico">›</span><span class="md">CHANGELOG.md</span></div>
+            <div class="row indent-1"><span class="ico">›</span><span class="dim">pyproject.toml</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <div class="compare-arrow" aria-hidden="true">
+        <span class="pill">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+
+      <!-- Output -->
+      <div class="compare-pane pane-output">
+        <div class="pane-head">
+          <span>Output · docs site</span>
+          <span class="pane-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+        <div class="pane-body">
+          <div class="doc-mock" aria-hidden="true">
+            <div class="doc-nav">
+              <span class="nav-label">Sections</span>
+              <span class="nav-item active"></span>
+              <span class="nav-item mid"></span>
+              <span class="nav-item short"></span>
+              <span class="nav-label">API</span>
+              <span class="nav-item mid"></span>
+              <span class="nav-item short"></span>
+              <span class="nav-item mid"></span>
+            </div>
+            <div class="doc-page">
+              <div class="dm-title"></div>
+              <div class="dm-line w90"></div>
+              <div class="dm-line w75"></div>
+              <div class="dm-line w60"></div>
+              <div class="dm-code">
+                <div class="dm-line"></div>
+                <div class="dm-line copper"></div>
+              </div>
+              <div class="dm-line w90"></div>
+              <div class="dm-line w60"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SPECS ============================== -->
+<section class="section" id="specs">
+  <div class="container">
+    <div class="section-head center" data-reveal>
+      <span class="eyebrow">Spec sheet</span>
+      <h2 class="section-title">How the machine <span class="accent">works</span></h2>
+    </div>
+
+    <div class="table-wrap" data-reveal style="--d:100ms">
+      <table class="spec-table">
+        <thead>
+          <tr><th>Stage</th><th>Component</th><th>Specification</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ingestion</td>
+            <td>GitHub REST API</td>
+            <td>git/trees + contents endpoints, PAT-boosted rate limits, truncation flagged on huge trees</td>
+          </tr>
+          <tr>
+            <td>Detection</td>
+            <td>Heuristics → LLM fallback</td>
+            <td>Score ≥ 0.55 → SDK · ≤ 0.20 → not an SDK · in-between → LLM classifier decides</td>
+          </tr>
+          <tr>
+            <td>Analysis</td>
+            <td>Python AST → IR</td>
+            <td>Modules, classes, functions, signatures and docstrings extracted structurally</td>
+          </tr>
+          <tr>
+            <td>Context</td>
+            <td>README / examples / changelog</td>
+            <td>Repository context injected into generation prompts for grounded output</td>
+          </tr>
+          <tr>
+            <td>Generation</td>
+            <td>LLM-written markdown</td>
+            <td>Per-module API pages, quickstart guides and overview sections</td>
+          </tr>
+          <tr>
+            <td>Build</td>
+            <td>MkDocs</td>
+            <td>Themed static site with graceful fallback to raw markdown on build failure</td>
+          </tr>
+          <tr>
+            <td>Output</td>
+            <td>docs.zip artifact</td>
+            <td>Downloadable bundle served by the API, ready to host anywhere</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== CTA =============================== -->
+<section class="section" id="cta">
+  <div class="container">
+    <div class="cta-box" data-reveal>
+      <h2>Forge your docs.</h2>
+      <p class="cta-sub">Drop a GitHub URL. Watch the pipeline run. Download the site.</p>
+      <form class="repo-form" novalidate>
+        <div class="field">
+          <input type="text" name="repo_url" placeholder="https://github.com/username/repo" autocomplete="off" spellcheck="false" aria-label="GitHub repository URL">
+        </div>
+        <button type="submit" class="btn btn-primary">Generate docs</button>
+      </form>
+      <div class="form-msg" role="status" aria-live="polite"></div>
+      <div class="cta-note">No signup · MIT licensed · runs against your repo</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================= FOOTER ============================= -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="flogo">DOCSMITH</span>
+        <span class="ftag">Automated SDK documentation · forged from source</span>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="https://github.com/Big-BenW3/Docsmith#readme" target="_blank" rel="noopener">README</a>
+        <a href="https://github.com/Big-BenW3/Docsmith" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/Big-BenW3/Docsmith/blob/main/SECURITY.md" target="_blank" rel="noopener">Security</a>
+        <a href="https://github.com/Big-BenW3/Docsmith/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+      </nav>
+      <div class="footer-meta">
+        <span>© 2026 Docsmith · MIT</span>
+        <span>Python · Flask · MkDocs · LLM</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
 <script>
-document.getElementById('repo-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const input = document.getElementById('repo-url');
-  const raw = input.value.trim();
-  if (!raw) return;
-  let repoUrl = raw;
-  if (!/^https?:\/\//i.test(repoUrl)) repoUrl = 'https://' + repoUrl;
-  if (!/^https?:\/\/github\.com\//i.test(repoUrl)) { alert('Please enter a valid GitHub URL'); return; }
+/* =========================================================================
+   Docsmith landing — interactions
+   Vanilla JS, no dependencies. Everything degrades gracefully without it.
+   ========================================================================= */
+(function () {
+  'use strict';
 
-  const btn = e.target.querySelector('button');
-  btn.disabled = true;
-  btn.textContent = 'QUEUED…';
+  const $  = (s, c) => (c || document).querySelector(s);
+  const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
-  try {
-    const resp = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ repo_url: repoUrl, branch: 'main' }),
-    });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || 'HTTP ' + resp.status);
-    window.location.href = '/generate?job=' + data.job_id;
-  } catch (err) {
-    alert('Failed: ' + err.message);
-    btn.disabled = false;
-    btn.textContent = 'GENERATE';
+  /* ---------------------------------------------------------------------
+     Toasts
+     --------------------------------------------------------------------- */
+  const toastStack = $('#toast-stack');
+  function toast(message, kind) {
+    if (!toastStack) return;
+    const el = document.createElement('div');
+    el.className = 'toast ' + (kind || '');
+    el.textContent = message;
+    toastStack.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+    setTimeout(() => {
+      el.classList.remove('in');
+      setTimeout(() => el.remove(), 400);
+    }, 3600);
   }
-});
+
+  /* ---------------------------------------------------------------------
+     Preloader — reveal once assets settle (with hard fallbacks)
+     --------------------------------------------------------------------- */
+  const preloader = $('#preloader');
+  const bootAt = Date.now();
+  function dismissPreloader() {
+    if (!preloader || preloader.classList.contains('done')) return;
+    const wait = Math.max(0, 750 - (Date.now() - bootAt));
+    setTimeout(() => preloader.classList.add('done'), wait);
+  }
+  if (document.readyState === 'complete') dismissPreloader();
+  else window.addEventListener('load', dismissPreloader);
+  setTimeout(dismissPreloader, 2600); // never trap the user
+
+  /* ---------------------------------------------------------------------
+     Custom cursor — lerped ring + instant dot (fine pointers only)
+     --------------------------------------------------------------------- */
+  const dot = $('#cursor-dot');
+  const ring = $('#cursor-ring');
+  if (finePointer.matches && dot && ring) {
+    document.body.classList.add('has-cursor');
+    let mx = innerWidth / 2, my = innerHeight / 2;
+    let rx = mx, ry = my;
+
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = 'translate(' + (mx - 3) + 'px,' + (my - 3) + 'px)';
+    }, { passive: true });
+
+    (function loop() {
+      rx += (mx - rx) * 0.16;
+      ry += (my - ry) * 0.16;
+      ring.style.transform = 'translate(' + (rx - 17) + 'px,' + (ry - 17) + 'px)';
+      requestAnimationFrame(loop);
+    })();
+
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.closest('a, button, input, .feature-card, .flow-node')) ring.classList.add('hovering');
+    });
+    document.addEventListener('mouseout', (e) => {
+      if (e.target.closest('a, button, input, .feature-card, .flow-node')) ring.classList.remove('hovering');
+    });
+    window.addEventListener('mousedown', () => ring.classList.add('pressed'));
+    window.addEventListener('mouseup', () => ring.classList.remove('pressed'));
+  }
+
+  /* ---------------------------------------------------------------------
+     Header — glass on scroll, hide on scroll-down / reveal on scroll-up
+     --------------------------------------------------------------------- */
+  const header = $('#site-header');
+  let lastY = window.scrollY;
+  function onScroll() {
+    if (!header) return;
+    const y = window.scrollY;
+    header.classList.toggle('scrolled', y > 12);
+    const goingDown = y > lastY && y > 240;
+    const menuOpen = $('#nav-links') && $('#nav-links').classList.contains('open');
+    header.classList.toggle('hidden-up', goingDown && !menuOpen);
+    lastY = y;
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------------------------------------------------------------------
+     Mobile nav
+     --------------------------------------------------------------------- */
+  const navToggle = $('#nav-toggle');
+  const navLinks = $('#nav-links');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+    navLinks.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     Smooth anchor scrolling (accounts for fixed header)
+     --------------------------------------------------------------------- */
+  $$('a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      if (!id || id === '#') return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.scrollY - 74;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+  });
+
+  /* ---------------------------------------------------------------------
+     Scroll reveals
+     --------------------------------------------------------------------- */
+  const revealables = $$('[data-reveal]');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealables.forEach((el) => io.observe(el));
+  } else {
+    revealables.forEach((el) => el.classList.add('in'));
+  }
+
+  /* ---------------------------------------------------------------------
+     Repo submission forms — validation, loading and inline error states
+     --------------------------------------------------------------------- */
+  function setMsg(form, text, ok) {
+    const msg = form.parentElement.querySelector('.form-msg');
+    if (!msg) return;
+    msg.textContent = text || '';
+    msg.classList.toggle('ok', !!ok);
+    msg.classList.toggle('visible', !!text);
+  }
+
+  function normalizeRepoUrl(raw) {
+    let url = raw.trim();
+    if (!url) return null;
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    if (!/^https?:\/\/(www\.)?github\.com\/[\w.-]+\/[\w.-]+\/?$/i.test(url)) return null;
+    return url.replace(/\/+$/, '');
+  }
+
+  $$('.repo-form').forEach((form) => {
+    const input = form.querySelector('input');
+    const button = form.querySelector('button');
+    const defaultLabel = button.textContent;
+
+    input.addEventListener('input', () => {
+      form.classList.remove('error');
+      setMsg(form, '');
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const repoUrl = normalizeRepoUrl(input.value);
+
+      if (!repoUrl) {
+        form.classList.remove('error');
+        void form.offsetWidth; /* restart shake animation */
+        form.classList.add('error');
+        setMsg(form, '✕ Enter a valid GitHub URL — e.g. https://github.com/owner/repo');
+        input.focus();
+        return;
+      }
+
+      form.classList.remove('error');
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner" aria-hidden="true"></span> Queued…';
+      setMsg(form, 'Contacting the pipeline…', true);
+
+      try {
+        const resp = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo_url: repoUrl, branch: 'main' }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) throw new Error(data.error || ('HTTP ' + resp.status));
+
+        setMsg(form, '✓ Job ' + data.job_id + ' queued — opening dashboard…', true);
+        toast('Job queued: ' + data.job_id, 'ok');
+        setTimeout(() => { window.location.href = '/generate?job=' + data.job_id; }, 550);
+      } catch (err) {
+        setMsg(form, '✕ ' + (err.message || 'Request failed') + ' — try again');
+        toast(err.message || 'Failed to queue job', 'err');
+        button.disabled = false;
+        button.textContent = defaultLabel;
+      }
+    });
+  });
+
+  /* ---------------------------------------------------------------------
+     Magnetic pull on primary CTAs (fine pointers only)
+     --------------------------------------------------------------------- */
+  if (finePointer.matches) {
+    $$('.btn-primary').forEach((btn) => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        btn.style.transform = 'translate(' + dx * 0.14 + 'px,' + dy * 0.22 + 'px)';
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+    });
+  }
+})();
 </script>
 </body>
 </html>
+
+
+
+
+

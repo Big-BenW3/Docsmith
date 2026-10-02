@@ -3,217 +3,722 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Live Docsmith job dashboard — progress, SDK detection confidence and downloadable documentation artifacts.">
+<meta name="theme-color" content="#04060a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2304060a'/%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='none' stroke='%236fcbdc' stroke-opacity='.65' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='monospace' font-weight='700' font-style='italic' font-size='38' fill='%23e08a55'%3ED%3C/text%3E%3C/svg%3E">
 <title>Job Status — Docsmith</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root{--bg:#000;--panel:#0A0A0A;--border:rgba(111,203,220,0.25);--cyan:#6FCBDC;--copper:#E0793C;--bone:#F5F3EC;--slate:#8FA3C4;--ok:#4ade80;--err:#f87171;}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--bone);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5;}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 28px;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);}
-  .nav-left{display:flex;align-items:center;gap:16px;}
-  .menu-btn{width:24px;height:24px;display:flex;flex-direction:column;justify-content:center;gap:4px;cursor:pointer;}
-  .menu-btn span{display:block;height:1px;background:var(--bone);}
-  .breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);}
-  .breadcrumb span{color:var(--bone);}
-  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:0.04em;}
-  .settings-btn{width:24px;height:24px;cursor:pointer;opacity:0.7;}
-
-  .dashboard{padding:40px 0;}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px;}
-  .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .job-id{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;}
-  .status-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;padding:6px 12px;border-radius:20px;border:1px solid var(--border);color:var(--cyan);}
-  .status-badge.in-progress{color:var(--cyan);}
-  .status-badge.done{color:var(--ok);border-color:var(--ok);}
-  .status-badge.error{color:var(--err);border-color:var(--err);}
-
-  .progress-section{margin-top:20px;}
-  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);margin-bottom:8px;}
-  .progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
-  .progress-fill{height:100%;background:var(--cyan);width:0%;transition:width 0.3s ease;}
-  .progress-text{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--cyan);margin-top:6px;}
-
-  .section-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:32px 0 16px;padding-top:24px;border-top:1px solid var(--border);}
-  .section-title:first-child{border-top:none;padding-top:0;}
-
-  .input-summary{display:grid;gap:12px;}
-  .summary-row{display:flex;gap:12px;font-size:13px;}
-  .summary-label{font-family:'IBM Plex Mono',monospace;color:var(--slate);min-width:140px;}
-  .summary-value{color:var(--bone);word-break:break-all;}
-
-  .detection-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
-  .confidence-score{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;color:var(--cyan);line-height:1;}
-  .confidence-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--slate);margin-top:4px;}
-  .detection-meta{font-size:13px;color:var(--slate);line-height:1.6;}
-  .detection-meta strong{color:var(--bone);}
-  .heuristics-list{list-style:none;padding:0;margin-top:12px;}
-  .heuristics-list li{padding:6px 0;font-size:13px;color:var(--bone);display:flex;align-items:center;gap:8px;}
-  .heuristics-list li::before{content:'•';color:var(--copper);font-weight:700;}
-
-  .success-card{border-color:var(--ok);}
-  .success-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--ok);margin-bottom:8px;}
-  .success-desc{font-size:13px;color:var(--slate);margin-bottom:20px;}
-  .btn-group{display:flex;gap:12px;flex-wrap:wrap;}
-  .btn{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;letter-spacing:0.04em;padding:10px 18px;border-radius:6px;border:none;cursor:pointer;text-decoration:none;display:inline-block;}
-  .btn-primary{background:var(--copper);color:var(--bg);}
-  .btn-primary:hover{background:#ef8a4d;}
-  .btn-secondary{background:transparent;color:var(--cyan);border:1px solid var(--cyan);}
-  .btn-secondary:hover{background:rgba(111,203,220,0.1);}
-
-  .log-section{margin-top:20px;}
-  .log-header{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;}
-  .log-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px;max-height:300px;overflow:auto;}
-  .log-box pre{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:0;}
-
-  .error-card{border-color:var(--err);}
-  .error-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--err);margin-bottom:8px;}
-  .error-message{font-size:13px;color:var(--slate);}
-
-  @media (max-width:760px){
-    .detection-grid{grid-template-columns:1fr;}
-    .btn-group{flex-direction:column;}
-  }
-</style>
+<link rel="stylesheet" href="/static/app.css">
+<noscript>
+  <style>
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .skeleton-wrap { display: none !important; }
+  </style>
+</noscript>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="nav-left">
-        <div class="menu-btn"><span></span><span></span><span></span></div>
-        <div class="breadcrumb"><span>Dashboard</span> / <span id="job-id-bread">New Job</span></div>
-      </div>
-      <div class="logo">DOCSMITH</div>
-      <div class="settings-btn">⚙</div>
-    </header>
 
-    <div class="dashboard" id="dashboard">
-      <div class="card">
-        <div class="card-header">
-          <div class="job-id">Job ID: <span id="job-id">--</span></div>
-          <div class="status-badge in-progress" id="status-badge">IN PROGRESS</div>
-        </div>
-        <div class="progress-section">
-          <div class="progress-label">Generation Progress</div>
-          <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-          <div class="progress-text" id="progress-text">0%</div>
-        </div>
-      </div>
+<!-- Film grain -->
+<div class="grain" aria-hidden="true"></div>
 
-      <div class="card" id="input-summary-card">
-        <div class="section-title">Input Summary</div>
-        <div class="input-summary">
-          <div class="summary-row"><div class="summary-label">Target Repository</div><div class="summary-value" id="repo-url">--</div></div>
-          <div class="summary-row"><div class="summary-label">Branch</div><div class="summary-value" id="branch">main</div></div>
-        </div>
-      </div>
+<!-- Header -->
+<header class="site-header" id="site-header">
+  <div class="container nav">
+    <a class="nav-brand" href="/" aria-label="Docsmith home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </span>
+      DOCSMITH
+    </a>
 
-      <div class="card" id="detection-card" hidden>
-        <div class="section-title">SDK Detection Results</div>
-        <div class="detection-grid">
-          <div>
-            <div class="confidence-score" id="confidence-score">--%</div>
-            <div class="confidence-label">Confidence score</div>
-          </div>
-          <div>
-            <div class="detection-meta">
-              <strong>Method Used:</strong> <span id="detection-method">--</span><br>
-              <strong>Detected Heuristics:</strong>
-              <ul class="heuristics-list" id="heuristics-list"></ul>
-            </div>
-          </div>
-        </div>
-      </div>
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
+      <span class="crumb"><a href="/">dashboard</a><span class="sep">/</span><span class="cur" id="job-id-bread">new job</span></span>
+      <a class="btn btn-ghost btn-sm" href="https://github.com/Big-BenW3/Docsmith" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-primary btn-sm" href="/">New generation</a>
+    </nav>
 
-      <div class="card success-card" id="success-card" hidden>
-        <div class="success-title">Success!</div>
-        <div class="success-desc">Build successful. Finalizing output.</div>
-        <div class="btn-group">
-          <a class="btn btn-primary" id="download-btn" href="#">Download docs.zip</a>
-          <button class="btn btn-secondary" onclick="alert('Preview would open in a new tab')">View Live Preview</button>
-        </div>
-      </div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-      <div class="card error-card" id="error-card" hidden>
-        <div class="error-title">Error</div>
-        <div class="error-message" id="error-message">Something went wrong.</div>
-      </div>
+<main class="dashboard container">
 
-      <div class="log-section" id="log-section" hidden>
-        <div class="log-header">Progress Log</div>
-        <div class="log-box"><pre id="log"></pre></div>
-      </div>
+  <!-- Skeleton — shown until the first successful poll -->
+  <div class="skeleton-wrap" id="skeleton">
+    <div class="skeleton">
+      <div class="sk-label">Connecting to job</div>
+      <div class="sk-line w40 big"></div>
+      <div class="sk-line w80"></div>
+      <div class="sk-line w60"></div>
+    </div>
+    <div class="skeleton">
+      <div class="sk-line w60"></div>
+      <div class="sk-line w80"></div>
+      <div class="sk-line w40"></div>
     </div>
   </div>
 
+  <!-- Job hero -->
+  <section class="card job-hero" id="job-hero" hidden>
+    <div class="jh-left">
+      <span class="status-badge queued" id="status-badge">QUEUED</span>
+
+      <div class="job-id-row">
+        <span class="job-id-label">Job</span>
+        <span class="job-id" id="job-id">—</span>
+        <button class="copy-btn" id="copy-job" title="Copy job ID" aria-label="Copy job ID">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </div>
+
+      <div class="repo-badges">
+        <span class="repo-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          <span class="val" id="repo-val">—</span>
+        </span>
+        <span class="repo-badge branch">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+          <span class="val" id="branch-val">main</span>
+        </span>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-head">
+          <span class="stage-now" id="stage-now">queued</span>
+          <span class="elapsed" id="elapsed">00:00 elapsed</span>
+        </div>
+        <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="steps" id="steps" aria-hidden="true">
+        <div class="step" data-at="0"><span class="step-dot"></span><span class="step-label">Queued</span></div>
+        <div class="step" data-at="8"><span class="step-dot"></span><span class="step-label">Fetch</span></div>
+        <div class="step" data-at="30"><span class="step-dot"></span><span class="step-label">Detect</span></div>
+        <div class="step" data-at="54"><span class="step-dot"></span><span class="step-label">Analyze</span></div>
+        <div class="step" data-at="76"><span class="step-dot"></span><span class="step-label">Generate</span></div>
+        <div class="step" data-at="90"><span class="step-dot"></span><span class="step-label">Build</span></div>
+        <div class="step" data-at="100"><span class="step-dot"></span><span class="step-label">Done</span></div>
+      </div>
+    </div>
+
+    <!-- Progress ring -->
+    <div class="ring-wrap" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6FCBDC"/>
+            <stop offset="100%" stop-color="#E0793C"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-track" cx="60" cy="60" r="54"/>
+        <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54" pathLength="100"/>
+      </svg>
+      <div class="ring-center">
+        <span class="ring-percent"><span id="ring-num">0</span><span class="pct">%</span></span>
+        <span class="ring-label">Complete</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary + detection -->
+  <div class="dash-grid">
+    <section class="card" id="summary-card">
+      <h2 class="card-title">Input summary</h2>
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="summary-label">Repository</span>
+          <span class="summary-value" id="summary-repo">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Branch</span>
+          <span class="summary-value accent" id="summary-branch">main</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Submitted</span>
+          <span class="summary-value" id="summary-created">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Duration</span>
+          <span class="summary-value" id="summary-duration">running…</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="detection-card" hidden>
+      <h2 class="card-title">SDK detection</h2>
+      <div class="det-grid">
+        <div class="det-meter">
+          <svg viewBox="0 0 120 120">
+            <defs>
+              <linearGradient id="detGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#6FCBDC"/>
+                <stop offset="100%" stop-color="#E0793C"/>
+              </linearGradient>
+            </defs>
+            <circle class="det-track" cx="60" cy="60" r="54"/>
+            <circle class="det-fill" id="det-ring" cx="60" cy="60" r="54" pathLength="100"/>
+          </svg>
+          <div class="det-center">
+            <span class="confidence-score" id="confidence-score">0%</span>
+            <span class="confidence-label">Confidence</span>
+          </div>
+        </div>
+        <div class="det-meta">
+          <div class="det-facts">
+            <span class="fact" id="det-verdict"><span class="k">Verdict</span><span class="v">—</span></span>
+            <span class="fact"><span class="k">Method</span><span class="v mono" id="detection-method">—</span></span>
+          </div>
+          <ul class="heuristics-list" id="heuristics-list"></ul>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Success -->
+  <section class="card success-card" id="success-card" hidden>
+    <span class="success-ico" aria-hidden="true">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    </span>
+    <div class="success-body">
+      <h3>Documentation forged</h3>
+      <p>Build complete — the artifact is ready to download and host anywhere.</p>
+    </div>
+    <div class="btn-row">
+      <a class="btn btn-primary" id="download-btn" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download docs.zip
+      </a>
+      <a class="btn btn-ghost" href="/">New generation</a>
+    </div>
+  </section>
+
+  <!-- Error -->
+  <section class="card error-card" id="error-card" hidden>
+    <div class="error-head">
+      <span class="error-ico" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </span>
+      <h3>Generation failed</h3>
+    </div>
+    <code class="error-message" id="error-message">Something went wrong.</code>
+    <ul class="hint-list">
+      <li>Confirm the repository is <strong>public</strong> (or the server has a GitHub token with access).</li>
+      <li>Check the URL resolves to a <strong>GitHub</strong> repo with Python source files.</li>
+      <li>Transient API limits resolve themselves — <strong>retry</strong> in a moment.</li>
+    </ul>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="retry-btn">Retry job</button>
+      <a class="btn btn-ghost" href="/">Back to home</a>
+    </div>
+  </section>
+
+  <!-- Terminal log -->
+  <section class="card terminal" id="log-section" hidden>
+    <div class="term-head">
+      <span class="term-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="term-title">pipeline log</span>
+      <span class="term-actions">
+        <button class="term-btn on" id="autoscroll" title="Toggle auto-scroll">Auto-scroll: on</button>
+        <button class="term-btn" id="copy-log" title="Copy log">Copy</button>
+      </span>
+    </div>
+    <div class="term-body" id="term-body">
+      <pre id="log"></pre>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+
 <script>
-const $ = (s) => document.querySelector(s);
-const urlParams = new URLSearchParams(window.location.search);
-const jobId = urlParams.get('job');
+/* =========================================================================
+   Docsmith job dashboard — live status, detection meter, terminal log
+   Vanilla JS, no dependencies.
+   ========================================================================= */
+(function () {
+  'use strict';
 
-if (!jobId) {
-  window.location.href = '/';
-}
+  const $  = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+  const params = new URLSearchParams(window.location.search);
+  const jobId = params.get('job') || "{{ initial_job_id or '' }}";
 
-$('#job-id').textContent = jobId;
-$('#job-id-bread').textContent = jobId;
+  if (!jobId) { window.location.replace('/'); return; }
 
-let poller = null;
+  /* ---------------------------------------------------------------------
+     Toasts
+     --------------------------------------------------------------------- */
+  const toastStack = $('#toast-stack');
+  function toast(message, kind) {
+    if (!toastStack) return;
+    const el = document.createElement('div');
+    el.className = 'toast ' + (kind || '');
+    el.textContent = message;
+    toastStack.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('in'));
+    setTimeout(() => {
+      el.classList.remove('in');
+      setTimeout(() => el.remove(), 400);
+    }, 3600);
+  }
 
-async function pollStatus(id) {
-  try {
-    const r = await fetch('/api/status/' + id);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const j = await r.json();
+  /* ---------------------------------------------------------------------
+     Header — glass on scroll, hide down / reveal up
+     --------------------------------------------------------------------- */
+  const header = $('#site-header');
+  let lastY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    if (!header) return;
+    const y = window.scrollY;
+    header.classList.toggle('scrolled', y > 12);
+    const menuOpen = $('#nav-links') && $('#nav-links').classList.contains('open');
+    header.classList.toggle('hidden-up', y > lastY && y > 240 && !menuOpen);
+    lastY = y;
+  }, { passive: true });
+  if (header) header.classList.add('scrolled'); /* dashboard is long — always glass */
 
-    $('#status-badge').textContent = (j.status || 'UNKNOWN').toUpperCase();
-    $('#status-badge').className = 'status-badge ' + (j.status || '');
+  const navToggle = $('#nav-toggle');
+  const navLinks = $('#nav-links');
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+    });
+    navLinks.addEventListener('click', (e) => {
+      if (e.target.closest('a')) {
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+      }
+    });
+  }
 
+  /* ---------------------------------------------------------------------
+     Clipboard helpers
+     --------------------------------------------------------------------- */
+  function copyText(text, label) {
+    const done = () => toast(label + ' copied', 'ok');
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done).catch(fallback);
+    } else fallback();
+
+    function fallback() {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); }
+      catch (e) { toast('Copy failed', 'err'); }
+      ta.remove();
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Formatting
+     --------------------------------------------------------------------- */
+  function fmtDur(sec) {
+    sec = Math.max(0, Math.floor(sec));
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    const mm = String(m).padStart(2, '0');
+    const ss = String(s).padStart(2, '0');
+    return h > 0 ? h + ':' + mm + ':' + ss : mm + ':' + ss;
+  }
+
+  const STATUS_TEXT = { queued: 'Queued', running: 'Running', done: 'Complete', error: 'Failed' };
+
+  /* ---------------------------------------------------------------------
+     Progress plumbing
+     --------------------------------------------------------------------- */
+  const RING = $('#ring-fill');
+  const BAR = $('#progress-fill');
+  const RING_NUM = $('#ring-num');
+  let shownPct = 0;
+
+  function setPercent(pct) {
+    pct = Math.max(0, Math.min(100, Math.round(pct)));
+    if (RING) RING.style.strokeDashoffset = String(100 - pct);
+    if (BAR) {
+      BAR.style.width = pct + '%';
+      BAR.classList.toggle('full', pct >= 100);
+    }
+    const bar = $('#progress-bar');
+    if (bar) bar.setAttribute('aria-valuenow', String(pct));
+
+    /* Count the ring number up with an ease-out curve */
+    const from = shownPct, to = pct, t0 = performance.now(), dur = 550;
+    if (from !== to) {
+      (function tick(t) {
+        const k = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - k, 3);
+        RING_NUM.textContent = String(Math.round(from + (to - from) * eased));
+        if (k < 1) requestAnimationFrame(tick);
+        else shownPct = to;
+      })(t0);
+    } else {
+      RING_NUM.textContent = String(to);
+      shownPct = to;
+    }
+  }
+
+  function updateSteps(pct, status) {
+    const steps = $$('#steps .step');
+    if (!steps.length) return;
+    let active = 0;
+    steps.forEach((s, i) => { if (pct >= Number(s.dataset.at)) active = i; });
+    const finished = status === 'done';
+    steps.forEach((s, i) => {
+      s.classList.toggle('done', finished || i < active);
+      const isHead = !finished && i === active;
+      s.classList.toggle('active', isHead);
+      s.classList.toggle('head', isHead);
+    });
+    const label = $('#stage-now');
+    if (label) {
+      label.textContent = finished
+        ? 'complete'
+        : (status === 'error' ? 'halted · ' : '') +
+          steps[active].querySelector('.step-label').textContent.toLowerCase();
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Terminal log rendering (only when content actually changed)
+     --------------------------------------------------------------------- */
+  const termBody = $('#term-body');
+  const logPre = $('#log');
+  const autoscrollBtn = $('#autoscroll');
+  let autoScroll = true;
+  let lastLogKey = '';
+  let lastLines = [];
+
+  function setAutoScroll(on) {
+    autoScroll = on;
+    if (autoscrollBtn) {
+      autoscrollBtn.classList.toggle('on', on);
+      autoscrollBtn.textContent = 'Auto-scroll: ' + (on ? 'on' : 'off');
+    }
+  }
+  if (autoscrollBtn) {
+    autoscrollBtn.addEventListener('click', () => setAutoScroll(!autoScroll));
+  }
+  if (termBody) {
+    termBody.addEventListener('scroll', () => {
+      const pinned = termBody.scrollHeight - termBody.scrollTop - termBody.clientHeight < 40;
+      if (!pinned && autoScroll) setAutoScroll(false);
+      else if (pinned && !autoScroll) setAutoScroll(true);
+    }, { passive: true });
+  }
+
+  function renderLog(lines, active) {
+    const key = lines.join('\n') + '|' + active;
+    if (key === lastLogKey) return;
+    lastLogKey = key;
+    lastLines = lines;
+
+    const frag = document.createDocumentFragment();
+    lines.forEach((line, i) => {
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      const m = line.match(/^\[(\d{2}:\d{2}:\d{2})\]\s?(.*)$/);
+      const ts = document.createElement('span');
+      ts.className = 'ts';
+      ts.textContent = m ? '[' + m[1] + '] ' : '';
+      const msg = document.createElement('span');
+      msg.className = 'msg';
+      msg.textContent = m ? m[2] : line;
+      if (/error/i.test(msg.textContent)) div.classList.add('error');
+      else if (/artifact ready|detection:|generated \d/i.test(msg.textContent)) div.classList.add('ok');
+      div.appendChild(ts);
+      div.appendChild(msg);
+      if (active && i === lines.length - 1) {
+        const caret = document.createElement('span');
+        caret.className = 'caret';
+        div.appendChild(caret);
+      }
+      frag.appendChild(div);
+    });
+    logPre.textContent = '';
+    logPre.appendChild(frag);
+    if (autoScroll && termBody) termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  /* ---------------------------------------------------------------------
+     Detection meter
+     --------------------------------------------------------------------- */
+  const detRing = $('#det-ring');
+  const scoreEl = $('#confidence-score');
+  let lastDetKey = '';
+
+  function renderDetection(d) {
+    const key = JSON.stringify(d);
+    if (key === lastDetKey) return;
+    const firstTime = !lastDetKey;
+    lastDetKey = key;
+
+    $('#detection-card').hidden = false;
+
+    const pct = Math.round((d.score || 0) * 100);
+    if (detRing) detRing.style.strokeDashoffset = String(100 - pct);
+
+    /* Count up on first reveal, then set directly */
+    if (firstTime && scoreEl) {
+      const t0 = performance.now(), dur = 900;
+      (function tick(t) {
+        const k = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - k, 3);
+        scoreEl.textContent = Math.round(pct * eased) + '%';
+        if (k < 1) requestAnimationFrame(tick);
+      })(t0);
+    } else if (scoreEl) {
+      scoreEl.textContent = pct + '%';
+    }
+
+    $('#detection-method').textContent = d.method || '—';
+
+    const verdict = $('#det-verdict');
+    const verdictVal = verdict.querySelector('.v');
+    const isSdk = !!d.is_sdk;
+    verdict.classList.toggle('verdict-sdk', isSdk);
+    verdict.classList.toggle('verdict-not', !isSdk);
+    verdictVal.textContent = isSdk ? 'SDK detected' : 'Not an SDK';
+
+    const list = $('#heuristics-list');
+    list.textContent = '';
+    (d.reasons || []).forEach((reason, i) => {
+      const li = document.createElement('li');
+      li.textContent = reason;
+      li.style.animationDelay = (120 + i * 70) + 'ms';
+      list.appendChild(li);
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     Summary + elapsed time
+     --------------------------------------------------------------------- */
+  let lastJob = null;
+  let elapsedTimer = null;
+
+  function elapsedSeconds(j) {
+    if (j.finished_at && j.created_at && j.finished_at >= j.created_at) {
+      return j.finished_at - j.created_at;           /* exact server-side delta */
+    }
+    if (!j.created_at) return 0;
+    const approx = Date.now() / 1000 - j.created_at;  /* server clock vs client clock */
+    if (approx < 0 || approx > 86400) return 0;        /* absurd skew — show 00:00 */
+    return approx;
+  }
+
+  function refreshElapsed() {
+    if (!lastJob) return;
+    const sec = elapsedSeconds(lastJob);
+    const running = lastJob.status === 'queued' || lastJob.status === 'running';
+    const e1 = $('#elapsed');
+    const e2 = $('#summary-duration');
+    if (e1) e1.textContent = fmtDur(sec) + ' elapsed';
+    if (e2) e2.textContent = running ? fmtDur(sec) + ' (running)' : fmtDur(sec);
+  }
+
+  function renderSummary(j) {
+    if (j.repo_url) {
+      $('#repo-val').textContent = j.repo_url.replace(/^https?:\/\/(www\.)?github\.com\//, '');
+      $('#repo-val').title = j.repo_url;
+      $('#summary-repo').textContent = j.repo_url;
+    }
+    if (j.branch) {
+      $('#branch-val').textContent = j.branch;
+      $('#summary-branch').textContent = j.branch;
+    }
+    if (j.created_at && $('#summary-created').textContent === '—') {
+      $('#summary-created').textContent =
+        new Date(j.created_at * 1000).toLocaleString(undefined, {
+          month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit',
+        });
+    }
+    refreshElapsed();
+    if (!elapsedTimer) elapsedTimer = setInterval(refreshElapsed, 1000);
+  }
+
+  /* ---------------------------------------------------------------------
+     Progress estimation fallback (older servers without progress_percent)
+     --------------------------------------------------------------------- */
+  const STAGE_MARKERS = [
+    [8, 'fetching repo tree'], [22, 'fetched '], [30, 'running sdk detection'],
+    [44, 'detection:'], [54, 'analyzing python source'], [64, 'ir: '],
+    [70, 'gathering readme'], [76, 'generating documentation sections'],
+    [86, 'generated '], [90, 'building mkdocs site'],
+    [94, 'packaging source only'], [96, 'artifact ready'],
+  ];
+
+  function estimatePercent(j) {
+    if (j.status === 'done') return 100;
+    if (j.status === 'queued') return 0;
+    if (typeof j.progress_percent === 'number') return j.progress_percent;
+    let pct = 5;
+    (j.progress || []).forEach((line) => {
+      const low = String(line).toLowerCase();
+      STAGE_MARKERS.forEach(([value, marker]) => {
+        if (low.indexOf(marker) !== -1) pct = Math.max(pct, value);
+      });
+    });
+    return Math.min(pct, 99);
+  }
+
+  /* ---------------------------------------------------------------------
+     Master render
+     --------------------------------------------------------------------- */
+  const skeleton = $('#skeleton');
+  const jobHero = $('#job-hero');
+  let poller = null;
+  let finished = false;
+  let failures = 0;
+
+  function stop() {
+    if (poller) { clearInterval(poller); poller = null; }
+  }
+
+  function render(j) {
+    lastJob = j;
+    if (skeleton) skeleton.hidden = true;
+    if (jobHero) jobHero.hidden = false;
+
+    /* Status badge */
+    const badge = $('#status-badge');
+    badge.textContent = (STATUS_TEXT[j.status] || j.status || 'Unknown').toUpperCase();
+    badge.className = 'status-badge ' + (j.status || '');
+
+    /* Progress */
+    const pct = estimatePercent(j);
+    setPercent(pct);
+    updateSteps(pct, j.status);
+
+    /* Summary + log + detection */
+    renderSummary(j);
     if (j.progress && j.progress.length) {
       $('#log-section').hidden = false;
-      $('#log').textContent = j.progress.join('\n');
+      renderLog(j.progress, j.status === 'queued' || j.status === 'running');
     }
+    if (j.detection) renderDetection(j.detection);
 
-    if (j.detection) {
-      const d = j.detection;
-      $('#detection-card').hidden = false;
-      $('#confidence-score').textContent = Math.round((d.score || 0) * 100) + '%';
-      $('#detection-method').textContent = d.method || '--';
-      const list = $('#heuristics-list');
-      list.innerHTML = '';
-      (d.reasons || []).forEach(r => {
-        const li = document.createElement('li');
-        li.textContent = r;
-        list.appendChild(li);
-      });
-    }
-
+    /* Terminal states */
     if (j.status === 'done') {
-      clearInterval(poller);
-      poller = null;
+      if (!finished) {
+        finished = true;
+        stop();
+        toast('Documentation ready — artifact built', 'ok');
+      }
       $('#success-card').hidden = false;
-      $('#download-btn').href = j.download_url || '#';
-      $('#progress-fill').style.width = '100%';
-      $('#progress-text').textContent = '100%';
+      $('#error-card').hidden = true;
+      $('#download-btn').href = j.download_url || ('/api/download/' + jobId);
+      $('#summary-duration').textContent = fmtDur(elapsedSeconds(j));
     } else if (j.status === 'error') {
-      clearInterval(poller);
-      poller = null;
+      if (!finished) {
+        finished = true;
+        stop();
+        toast('Job failed — see error details', 'err');
+      }
       $('#error-card').hidden = false;
-      $('#error-message').textContent = (j.error || 'Unknown error');
-      $('#status-badge').className = 'status-badge error';
-    } else {
-      const pct = j.progress_percent || 0;
-      $('#progress-fill').style.width = pct + '%';
-      $('#progress-text').textContent = pct + '%';
+      $('#error-message').textContent = j.error || 'Unknown error';
     }
-  } catch (e) {
-    console.error('Poll error:', e);
   }
-}
 
-poller = setInterval(() => pollStatus(jobId), 1500);
-pollStatus(jobId);
+  /* ---------------------------------------------------------------------
+     Poll loop
+     --------------------------------------------------------------------- */
+  async function poll() {
+    try {
+      const r = await fetch('/api/status/' + jobId, { cache: 'no-store' });
+      if (r.status === 404) {
+        const err = new Error('Job not found — it may have expired.');
+        err.notFound = true;
+        throw err;
+      }
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      failures = 0;
+      render(j);
+    } catch (e) {
+      failures += 1;
+      if (failures === 4) toast('Connection hiccup — retrying…', 'err');
+      if (e.notFound && failures >= 3) {
+        stop();
+        if (skeleton) skeleton.hidden = true;
+        if (jobHero) jobHero.hidden = false;
+        $('#error-card').hidden = false;
+        $('#error-message').textContent = e.message;
+        $('#status-badge').textContent = 'NOT FOUND';
+        $('#status-badge').className = 'status-badge error';
+      }
+      if (failures >= 20) {
+        stop();
+        if (skeleton) skeleton.hidden = true;
+        $('#error-card').hidden = false;
+        $('#error-message').textContent = 'Lost contact with the server. Reload to retry.';
+      }
+    }
+  }
+
+  /* ---------------------------------------------------------------------
+     Events
+     --------------------------------------------------------------------- */
+  $('#copy-job').addEventListener('click', function () {
+    copyText(jobId, 'Job ID');
+    const btn = this;
+    btn.classList.add('copied');
+    setTimeout(() => btn.classList.remove('copied'), 1200);
+  });
+
+  $('#copy-log').addEventListener('click', () => {
+    if (!lastLines.length) { toast('Log is empty', 'err'); return; }
+    copyText(lastLines.join('\n'), 'Log');
+  });
+
+  $('#retry-btn').addEventListener('click', async function () {
+    if (!lastJob || !lastJob.repo_url) { window.location.reload(); return; }
+    const btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner" aria-hidden="true"></span> Re-queueing…';
+    try {
+      const resp = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repo_url: lastJob.repo_url, branch: lastJob.branch || 'main' }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'HTTP ' + resp.status);
+      window.location.href = '/generate?job=' + data.job_id;
+    } catch (err) {
+      toast('Retry failed: ' + err.message, 'err');
+      btn.disabled = false;
+      btn.textContent = 'Retry job';
+    }
+  });
+
+  /* ---------------------------------------------------------------------
+     Boot
+     --------------------------------------------------------------------- */
+  $('#job-id').textContent = jobId;
+  $('#job-id-bread').textContent = jobId;
+  document.title = 'Job ' + jobId + ' — Docsmith';
+
+  poll();
+  poller = setInterval(poll, 1500);
+})();
+
+
 </script>
 </body>
 </html>
+
+
+
