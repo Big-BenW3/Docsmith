@@ -1,22 +1,13 @@
 {
-  "_comment": "Vercel deployment configuration for SDK Auto-Doc Generator",
   "version": 2,
   "functions": {
     "api/index.py": {
       "runtime": "python3.11",
-      "maxDuration": 60,
-      "_comment": "60s max on Pro tier; Hobby tier is 10s. Pipeline runs in background thread. Python 3.11 specified here replaces legacy builds config."
+      "maxDuration": 60
     }
   },
   "rewrites": [
     { "source": "/static/(.*)", "destination": "/api/index.py" },
     { "source": "/(.*)", "destination": "/api/index.py" }
-  ],
-  "env": {
-    "GITHUB_TOKEN": "@github_token",
-    "BASE_URL": "@base_url",
-    "API_KEY": "@llm_api_key",
-    "MODEL": "@llm_model",
-    "_comment": "LLM_PROVIDER removed - OpenAI-only. Env vars now match .env exactly."
-  }
+  ]
 }
