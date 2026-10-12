@@ -3,17 +3,17 @@
 This module is the *only* place in the codebase that talks to a language model.
 It exposes two higher-level helpers used by the pipeline:
 
-    classify_is_sdk()  — used by `detector.py` as a fallback classifier.
-    write_section()    — used by `generator.py` to author markdown doc sections.
+    classify_is_sdk()  - used by `detector.py` as a fallback classifier.
+    write_section()    - used by `generator.py` to author markdown doc sections.
 
 ---------------------------------------------------------------------------
 Configuration (environment variables)
 ---------------------------------------------------------------------------
 The client reads three variables, all of which are defined in ``.env``:
 
-    BASE_URL   — OpenAI-compatible endpoint base URL.
-    API_KEY    — Bearer token / API key sent in the Authorization header.
-    MODEL      — The model identifier to use for completions.
+    BASE_URL   - OpenAI-compatible endpoint base URL.
+    API_KEY    - Bearer token / API key sent in the Authorization header.
+    MODEL      - The model identifier to use for completions.
 
 These intentionally match the names in ``.env`` so there is a single source of
 truth.  ``python-dotenv`` is used to load ``.env`` automatically in local dev;
@@ -39,7 +39,7 @@ import re
 from typing import Any, Optional
 
 # ---------------------------------------------------------------------------
-# dotenv — load variables from a local .env file if present.
+# dotenv - load variables from a local .env file if present.
 # In production this is a no-op (the file won't exist / vars come from the
 # platform).  We import defensively so the app still boots if the package is
 # somehow missing.
@@ -125,14 +125,14 @@ def complete(
     Parameters
     ----------
     system
-        The system prompt — sets role, tone, and output constraints.
+        The system prompt - sets role, tone, and output constraints.
     user
-        The user message — typically a JSON-serialised payload.
+        The user message - typically a JSON-serialised payload.
     max_tokens
         Cap on generated tokens.  Keep small for classification, larger for
         prose generation.
     temperature
-        Lower = more deterministic.  Use 0.0 for classification, 0.2–0.4
+        Lower = more deterministic.  Use 0.0 for classification, 0.2-0.4
         for documentation prose.
 
     Returns
@@ -170,7 +170,7 @@ def classify_is_sdk(result, reasons: list[str]) -> tuple[bool, str]:
 
     Called only when heuristics are inconclusive (score between 0.20 and
     0.55).  Sends a compact, privacy-safe summary of the repo surface (file
-    paths + README head) — **never raw source code** — and asks the model to
+    paths + README head) - **never raw source code** - and asks the model to
     classify whether the repo is an SDK / API client library.
 
     Parameters
@@ -184,13 +184,13 @@ def classify_is_sdk(result, reasons: list[str]) -> tuple[bool, str]:
     Returns
     -------
     (bool, str)
-        ``(is_sdk, rationale)`` — ``rationale`` is capped at 400 chars.
+        ``(is_sdk, rationale)`` - ``rationale`` is capped at 400 chars.
     """
     # Local import to avoid a circular import at module load time.
     from .fetcher import FetchResult  # noqa: F401  (type hint only)
 
     # --- Build a compact "surface" view of the repo -----------------------
-    # We send at most 80 file paths — enough signal, cheap on tokens.
+    # We send at most 80 file paths - enough signal, cheap on tokens.
     surface: list[str] = list(result.files.keys())[:80]
 
     # Grab the first README we find and send its head (≤ 2500 chars).
@@ -215,7 +215,7 @@ def classify_is_sdk(result, reasons: list[str]) -> tuple[bool, str]:
         '  {"is_sdk": <boolean>, "rationale": "<one or two sentences>"}\n'
         "\n"
         "Rules:\n"
-        "1. Output ONLY the JSON object — no markdown fences, no preamble, "
+        "1. Output ONLY the JSON object - no markdown fences, no preamble, "
         "no trailing text.\n"
         "2. \"rationale\" must be concise (max 40 words) and must NOT quote "
         "or paraphrase raw source code.\n"
@@ -255,7 +255,7 @@ def write_section(section: str, ir_slice: dict, context: dict, extra: str = "") 
     """Produce GitHub-flavored Markdown for a single documentation section.
 
     Only the intermediate representation (IR) + curated context is sent to
-    the model — **raw source code is never transmitted**.  This keeps prompts
+    the model - **raw source code is never transmitted**.  This keeps prompts
     bounded and avoids leaking proprietary implementation details.
 
     Parameters
@@ -273,9 +273,22 @@ def write_section(section: str, ir_slice: dict, context: dict, extra: str = "") 
     Returns
     -------
     str
-        Markdown content for the section (no leading H1 — that's added by
+        Markdown content for the section (no leading H1 - that's added by
         ``generator._ensure_h1()``).
     """
+    raw = _write_section_uncleaned(section, ir_slice, context, extra)
+    # Guarantee no em dashes (or lookalikes) ever reach the docs - the house
+    # style forbids them.  Belt and suspenders: the system prompt already
+    # instructs the model, but models do not always obey.
+    return _strip_em_dashes(raw)
+
+
+def _strip_em_dashes(text: str) -> str:
+    """Replace em/en/minus dash variants with a plain hyphen."""
+    return re.sub(r"[\u2014\u2013\u2212\u2012\u2010\u2011]", "-", text)
+
+
+def _write_section_uncleaned(section: str, ir_slice: dict, context: dict, extra: str = "") -> str:
     # --- System prompt -----------------------------------------------------
     # Structured, opinionated, and anti-hallucination.  The model is told
     # exactly what format to produce and explicitly forbidden from inventing
@@ -285,7 +298,7 @@ def write_section(section: str, ir_slice: dict, context: dict, extra: str = "") 
         "Python SDK.\n"
         "\n"
         "Output rules (follow exactly):\n"
-        "1. Output GitHub-flavored Markdown ONLY — no HTML, no preamble, no "
+        "1. Output GitHub-flavored Markdown ONLY - no HTML, no preamble, no "
         "trailing commentary, no explanations of what you are doing.\n"
         "2. Use fenced ```python code blocks for all code examples.\n"
         "3. Use MkDocs Material admonitions (`!!! note`, `!!! warning`, "
@@ -295,13 +308,15 @@ def write_section(section: str, ir_slice: dict, context: dict, extra: str = "") 
         "that are not present in the provided IR. If information is missing, "
         "omit it rather than guess.\n"
         "6. Use H2 (`##`) for sub-sections within the document. Do NOT emit "
-        "an H1 — the system adds one for you.\n"
+        "an H1 - the system adds one for you.\n"
         "7. When referencing code identifiers, wrap them in backticks.\n"
         "8. Match the tone of the README if one is provided in the context.\n"
         "9. Be concise and practical. Prefer showing over telling.\n"
         "10. If the section is not applicable to this SDK (e.g. framework "
         "integrations for a framework-agnostic library), say so briefly "
-        "instead of padding with irrelevant content."
+        "instead of padding with irrelevant content.\n"
+        "11. Do not use em dashes anywhere in the output. Use periods, "
+        "commas, or hyphens (-) instead."
     )
 
     # --- User payload ------------------------------------------------------

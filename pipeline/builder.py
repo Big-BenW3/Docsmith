@@ -100,7 +100,7 @@ def _mkdocs_config(package_name: str, nav: list) -> str:
     Uses the Material theme with a curated set of features and extensions.
     """
     cfg = {
-        "site_name": f"{package_name} — SDK docs",
+        "site_name": f"{package_name} - SDK docs",
         "site_description": f"Auto-generated documentation for {package_name}",
         "theme": {
             "name": "material",

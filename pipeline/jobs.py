@@ -9,11 +9,11 @@ for the final zip.
 ---------------------------------------------------------------------------
 Data model
 ---------------------------------------------------------------------------
-``Job`` — a dataclass holding all state for one generation request:
+``Job`` - a dataclass holding all state for one generation request:
     id, repo_url, branch, status, progress log, error, detection result,
     repo_slug, artifact_path, timestamps.
 
-``_REGISTRY`` — a module-level dict mapping job_id → Job.  Protected by
+``_REGISTRY`` - a module-level dict mapping job_id → Job.  Protected by
 ``_LOCK`` for thread safety.
 
 ---------------------------------------------------------------------------
@@ -192,7 +192,7 @@ def _run_pipeline(job_id: str) -> None:
         job.detection = det.as_dict()
         _log(job, f"detection: is_sdk={det.is_sdk} score={det.score:.2f} method={det.method}")
         if not det.is_sdk:
-            _log(job, "not detected as an SDK — proceeding anyway with best-effort docs")
+            _log(job, "not detected as an SDK - proceeding anyway with best-effort docs")
 
         # ------------------------------------------------------------------
         # Step 3: AST analysis → IR
@@ -228,7 +228,7 @@ def _run_pipeline(job_id: str) -> None:
             build = builder.assemble(docs, package_name=result.ref.repo,
                                      workdir=workdir)
         except Exception as build_err:  # noqa: BLE001
-            # mkdocs build failed — fall back to zipping raw markdown.
+            # mkdocs build failed - fall back to zipping raw markdown.
             _log(job, f"mkdocs build failed ({build_err}); packaging source only")
             build = builder.assemble(docs, package_name=result.ref.repo,
                                      workdir=workdir, skip_build=True)

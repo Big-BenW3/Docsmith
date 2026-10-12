@@ -37,9 +37,9 @@ from .fetcher import FetchResult
 class DetectionResult:
     """Outcome of the SDK detection step."""
     is_sdk: bool
-    score: float                # 0..1 — confidence score from heuristics
+    score: float                # 0..1 - confidence score from heuristics
     reasons: list[str] = field(default_factory=list)
-    method: str = "heuristic"   # "heuristic" | "llm" — how the verdict was reached
+    method: str = "heuristic"   # "heuristic" | "llm" - how the verdict was reached
 
     def as_dict(self) -> dict:
         """Serialise to a plain dict for JSON API responses."""
@@ -161,7 +161,7 @@ def detect(result: FetchResult) -> DetectionResult:
         reasons.append(f"LLM classifier: {rationale}")
         return DetectionResult(is_sdk=verdict, score=score, reasons=reasons, method="llm")
     except Exception as e:  # noqa: BLE001
-        # LLM unavailable — fall back to a mid-threshold and note the failure.
+        # LLM unavailable - fall back to a mid-threshold and note the failure.
         reasons.append(f"LLM fallback unavailable ({e}); defaulting to score threshold")
         return DetectionResult(is_sdk=score >= 0.4, score=score, reasons=reasons, method="heuristic")
 

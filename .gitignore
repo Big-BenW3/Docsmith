@@ -50,7 +50,7 @@ Thumbs.db
 .~lock.*
 
 # ---------------------------------------------------------------------------
-# Environment variables — NEVER commit real secrets
+# Environment variables - NEVER commit real secrets
 # ---------------------------------------------------------------------------
 .env
 .env.local

@@ -6,7 +6,7 @@ of classes, functions, signatures, type hints, docstrings, and imports.
 
 Why an IR?
 ----------
-The LLM in ``generator.py`` is fed *only* the IR — never raw source code.
+The LLM in ``generator.py`` is fed *only* the IR - never raw source code.
 This has three benefits:
 
 1.  **Token efficiency**: the IR is far more compact than raw source.
@@ -14,7 +14,7 @@ This has three benefits:
 3.  **Accuracy**: the model can't hallucinate APIs that aren't in the IR,
     because the IR is a faithful structural extract.
 
-The IR is intentionally lossy — it drops function bodies, comments, and
+The IR is intentionally lossy - it drops function bodies, comments, and
 decorator arguments.  What remains is the "public surface" needed to write
 useful documentation.
 """
@@ -112,7 +112,7 @@ def _annot(node: Optional[ast.AST]) -> Optional[str]:
 
 
 def _default(node: Optional[ast.AST]) -> Optional[str]:
-    """Alias for ``_annot`` — used for default argument values."""
+    """Alias for ``_annot`` - used for default argument values."""
     return _annot(node)
 
 

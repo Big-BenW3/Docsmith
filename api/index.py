@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-b"""Flask entry point for the SDK Auto-Doc Generator.
+"""Flask entry point for the SDK Auto-Doc Generator.
 
 This file is the single web server for both local development and Vercel's
 serverless Python runtime.  All HTTP routes live here; the heavy lifting
@@ -32,7 +32,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 # ---------------------------------------------------------------------------
-# dotenv — load .env for local development
+# dotenv - load .env for local development
 # ---------------------------------------------------------------------------
 # In production (Vercel) environment variables are injected by the platform,
 # so ``.env`` won't exist and this is a harmless no-op.  We import defensively
@@ -148,7 +148,7 @@ def api_download(job_id: str):
 
 @app.errorhandler(404)
 def _not_found(_):
-    """JSON 404 handler — keeps API responses consistent."""
+    """JSON 404 handler - keeps API responses consistent."""
     return jsonify({"error": "not found"}), 404
 
 

@@ -27,6 +27,6 @@
     "BASE_URL": "@base_url",
     "API_KEY": "@llm_api_key",
     "MODEL": "@llm_model",
-    "_comment": "LLM_PROVIDER removed — OpenAI-only. Env vars now match .env exactly."
+    "_comment": "LLM_PROVIDER removed - OpenAI-only. Env vars now match .env exactly."
   }
 }

@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Live Docsmith job dashboard — progress, SDK detection confidence and downloadable documentation artifacts.">
+<meta name="description" content="Live Docsmith job dashboard - progress, SDK detection confidence and downloadable documentation artifacts.">
 <meta name="theme-color" content="#04060a">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2304060a'/%3E%3Crect x='2' y='2' width='60' height='60' rx='14' fill='none' stroke='%236fcbdc' stroke-opacity='.65' stroke-width='2'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='monospace' font-weight='700' font-style='italic' font-size='38' fill='%23e08a55'%3ED%3C/text%3E%3C/svg%3E">
-<title>Job Status — Docsmith</title>
+<title>Job Status - Docsmith</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/app.css">
 <noscript>
   <style>
@@ -47,7 +47,7 @@
 
 <main class="dashboard container">
 
-  <!-- Skeleton — shown until the first successful poll -->
+  <!-- Skeleton - shown until the first successful poll -->
   <div class="skeleton-wrap" id="skeleton">
     <div class="skeleton">
       <div class="sk-label">Connecting to job</div>
@@ -69,7 +69,7 @@
 
       <div class="job-id-row">
         <span class="job-id-label">Job</span>
-        <span class="job-id" id="job-id">—</span>
+        <span class="job-id" id="job-id">-</span>
         <button class="copy-btn" id="copy-job" title="Copy job ID" aria-label="Copy job ID">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>
@@ -78,7 +78,7 @@
       <div class="repo-badges">
         <span class="repo-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-          <span class="val" id="repo-val">—</span>
+          <span class="val" id="repo-val">-</span>
         </span>
         <span class="repo-badge branch">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
@@ -133,7 +133,7 @@
       <div class="summary-rows">
         <div class="summary-row">
           <span class="summary-label">Repository</span>
-          <span class="summary-value" id="summary-repo">—</span>
+          <span class="summary-value" id="summary-repo">-</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Branch</span>
@@ -141,7 +141,7 @@
         </div>
         <div class="summary-row">
           <span class="summary-label">Submitted</span>
-          <span class="summary-value" id="summary-created">—</span>
+          <span class="summary-value" id="summary-created">-</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">Duration</span>
@@ -171,8 +171,8 @@
         </div>
         <div class="det-meta">
           <div class="det-facts">
-            <span class="fact" id="det-verdict"><span class="k">Verdict</span><span class="v">—</span></span>
-            <span class="fact"><span class="k">Method</span><span class="v mono" id="detection-method">—</span></span>
+            <span class="fact" id="det-verdict"><span class="k">Verdict</span><span class="v">-</span></span>
+            <span class="fact"><span class="k">Method</span><span class="v mono" id="detection-method">-</span></span>
           </div>
           <ul class="heuristics-list" id="heuristics-list"></ul>
         </div>
@@ -187,7 +187,7 @@
     </span>
     <div class="success-body">
       <h3>Documentation forged</h3>
-      <p>Build complete — the artifact is ready to download and host anywhere.</p>
+      <p>Build complete - the artifact is ready to download and host anywhere.</p>
     </div>
     <div class="btn-row">
       <a class="btn btn-primary" id="download-btn" href="#">
@@ -210,7 +210,7 @@
     <ul class="hint-list">
       <li>Confirm the repository is <strong>public</strong> (or the server has a GitHub token with access).</li>
       <li>Check the URL resolves to a <strong>GitHub</strong> repo with Python source files.</li>
-      <li>Transient API limits resolve themselves — <strong>retry</strong> in a moment.</li>
+      <li>Transient API limits resolve themselves - <strong>retry</strong> in a moment.</li>
     </ul>
     <div class="btn-row">
       <button class="btn btn-primary" id="retry-btn">Retry job</button>
@@ -239,7 +239,7 @@
 
 <script>
 /* =========================================================================
-   Docsmith job dashboard — live status, detection meter, terminal log
+   Docsmith job dashboard - live status, detection meter, terminal log
    Vanilla JS, no dependencies.
    ========================================================================= */
 (function () {
@@ -270,7 +270,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     Header — glass on scroll, hide down / reveal up
+     Header - glass on scroll, hide down / reveal up
      --------------------------------------------------------------------- */
   const header = $('#site-header');
   let lastY = window.scrollY;
@@ -282,7 +282,7 @@
     header.classList.toggle('hidden-up', y > lastY && y > 240 && !menuOpen);
     lastY = y;
   }, { passive: true });
-  if (header) header.classList.add('scrolled'); /* dashboard is long — always glass */
+  if (header) header.classList.add('scrolled'); /* dashboard is long - always glass */
 
   const navToggle = $('#nav-toggle');
   const navLinks = $('#nav-links');
@@ -484,7 +484,7 @@
       scoreEl.textContent = pct + '%';
     }
 
-    $('#detection-method').textContent = d.method || '—';
+    $('#detection-method').textContent = d.method || '-';
 
     const verdict = $('#det-verdict');
     const verdictVal = verdict.querySelector('.v');
@@ -515,7 +515,7 @@
     }
     if (!j.created_at) return 0;
     const approx = Date.now() / 1000 - j.created_at;  /* server clock vs client clock */
-    if (approx < 0 || approx > 86400) return 0;        /* absurd skew — show 00:00 */
+    if (approx < 0 || approx > 86400) return 0;        /* absurd skew - show 00:00 */
     return approx;
   }
 
@@ -539,7 +539,7 @@
       $('#branch-val').textContent = j.branch;
       $('#summary-branch').textContent = j.branch;
     }
-    if (j.created_at && $('#summary-created').textContent === '—') {
+    if (j.created_at && $('#summary-created').textContent === '-') {
       $('#summary-created').textContent =
         new Date(j.created_at * 1000).toLocaleString(undefined, {
           month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit',
@@ -615,7 +615,7 @@
       if (!finished) {
         finished = true;
         stop();
-        toast('Documentation ready — artifact built', 'ok');
+        toast('Documentation ready - artifact built', 'ok');
       }
       $('#success-card').hidden = false;
       $('#error-card').hidden = true;
@@ -625,7 +625,7 @@
       if (!finished) {
         finished = true;
         stop();
-        toast('Job failed — see error details', 'err');
+        toast('Job failed - see error details', 'err');
       }
       $('#error-card').hidden = false;
       $('#error-message').textContent = j.error || 'Unknown error';
@@ -639,7 +639,7 @@
     try {
       const r = await fetch('/api/status/' + jobId, { cache: 'no-store' });
       if (r.status === 404) {
-        const err = new Error('Job not found — it may have expired.');
+        const err = new Error('Job not found - it may have expired.');
         err.notFound = true;
         throw err;
       }
@@ -649,7 +649,7 @@
       render(j);
     } catch (e) {
       failures += 1;
-      if (failures === 4) toast('Connection hiccup — retrying…', 'err');
+      if (failures === 4) toast('Connection hiccup - retrying…', 'err');
       if (e.notFound && failures >= 3) {
         stop();
         if (skeleton) skeleton.hidden = true;
@@ -709,7 +709,7 @@
      --------------------------------------------------------------------- */
   $('#job-id').textContent = jobId;
   $('#job-id-bread').textContent = jobId;
-  document.title = 'Job ' + jobId + ' — Docsmith';
+  document.title = 'Job ' + jobId + ' - Docsmith';
 
   poll();
   poller = setInterval(poll, 1500);
